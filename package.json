@@ -1,0 +1,17 @@
+{
+  "name": "lti-cl",
+  "version": "0.0.1",
+  "description": "CourseLib Website base Course components",
+  "main": "js/Course.js",
+  "keywords": [
+    "Education",
+    "LTI"
+  ],
+  "author": "Charles B. Owen",
+  "license": "MIT",
+  "dependencies": {
+    "site-cl": "^0.0.1",
+    "users-cl": "^0.0.1",
+    "console-cl": "^0.0.1"
+  }
+}
