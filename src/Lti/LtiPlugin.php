@@ -19,6 +19,17 @@ use CL\Lti\LtiOutcomes;
 class LtiPlugin extends \CL\Site\Components\Plugin {
 	const JWT_LTI_GROUP = 'lti_group'; ///< Field to use in JWT for LTI group
 
+	/**
+	 * A tag that represents this plugin
+	 * @return string A tag like 'course', 'users', etc.
+	 */
+	public function tag() {return 'lti';}
+
+	/**
+	 * Return an array of tags indicating what plugins this one is dependent on.
+	 * @return array of tags this plugin is dependent on
+	 */
+	public function depends() {return ['course'];}
 
 	/**
 	 * Install the plugin
@@ -35,10 +46,6 @@ class LtiPlugin extends \CL\Site\Components\Plugin {
 		$site->addPreStartup(function(Site $site, Server $server, $time) {
 			return $this->preStartup($site, $server, $time);
 		});
-
-		$site->addStartup(function(Site $site, Server $server, $time) {
-			return $this->startup($site, $server, $time);
-		}, 50); // Must be less than the value for Users
 
 		$site->addPostStartup(function(Site $site, Server $server, $time) {
 			return $this->postStartup($site, $server, $time);
@@ -63,7 +70,10 @@ class LtiPlugin extends \CL\Site\Components\Plugin {
 	/**
 	 * Handle activities prior to startup of the user system
 	 *
-	 * Ensure the tables exist
+	 * Ensure the tables exist, then we test for any LTI Launch Request.
+	 *
+	 * Any LTI Launch request must occur before the normal system startup
+	 * of users and members.
 	 *
 	 * @param Site $config
 	 * @param Server $server
@@ -77,17 +87,6 @@ class LtiPlugin extends \CL\Site\Components\Plugin {
 			$maker = new LtiTableMaker($site->db);
 			$maker->create(false);
 		}
-		return null;
-	}
-
-	/**
-	 * Handle startup of the LTI system
-	 * @param Site $site
-	 * @param Server $server
-	 * @param int $time Current time
-	 * @return null|string redirect page.
-	 */
-	private function startup(Site $site, Server $server, $time) {
 
 		// Potential LTI Launch
 		if($server->server['REQUEST_METHOD'] === 'POST' && isset($server->post['lti_message_type'])) {
@@ -129,7 +128,6 @@ class LtiPlugin extends \CL\Site\Components\Plugin {
 				$user->unsetJWT(self::JWT_LTI_GROUP);
 			}
 
-
 			//
 			// Get any outcomes support
 			//
@@ -160,8 +158,10 @@ class LtiPlugin extends \CL\Site\Components\Plugin {
 			return $server->server['REQUEST_URI'];
 		}
 
+
 		return null;
 	}
+
 
 	/**
 	 * Handle activities after startup of the user system
