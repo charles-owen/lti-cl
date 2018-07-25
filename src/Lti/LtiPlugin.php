@@ -1,22 +1,22 @@
 <?php
 /**
  * @file
- * Plugin class for the LTI subsystem
+ *Site configuration object for the Lti plugin
  */
 
 namespace CL\Lti;
 
-use CL\Site\Site;
 use CL\Site\System\Server;
+use CL\Site\Router;
+use CL\Site\Site;
 use CL\Lti\Views\ErrorView;
 use CL\Lti\Api\ApiLti;
 use CL\Users\User;
-use CL\Lti\LtiOutcomes;
 
 /**
- * Plugin class for the LTI subsystem
+ * Site configuration object for the Lti plugin
  */
-class LtiPlugin extends \CL\Site\Components\Plugin {
+class LtiPlugin extends \CL\Site\Plugin {
 	const JWT_LTI_GROUP = 'lti_group'; ///< Field to use in JWT for LTI group
 
 	/**
@@ -32,16 +32,43 @@ class LtiPlugin extends \CL\Site\Components\Plugin {
 	public function depends() {return ['course'];}
 
 	/**
+	 * Amend existing object
+	 * The Router is amended with routes for the login page
+	 * and for the user API.
+	 * @param $object Object to amend.
+	 */
+	public function amend($object) {
+		if($object instanceof Router) {
+			$router = $object;
+			$router->addRoute(['lti', 'error', ':id'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new ErrorView($site, $properties);
+				return $view->whole();
+			});
+
+			$router->addRoute(['lti', 'download', ':id', ':assign', ':grade'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new FileDownload($site, $server, $properties);
+				return $view->whole();
+			});
+
+			$router->addRoute(['lti', 'view', ':id', ':assign', ':grade'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new FileView($site, $properties);
+				return $view->whole();
+			});
+
+			$router->addRoute(['api', 'lti', '*'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$resource = new ApiLti();
+				return $resource->apiDispatch($site, $server, $params, $properties, $time);
+			});
+		}
+	}
+
+	/**
 	 * Install the plugin
 	 * @param Site $site The Site configuration object
 	 */
 	public function install(Site $site) {
-		$site->install("lti", new LtiConfig());
-
-		$site->addRoute(['lti', 'error', ':id'], function(Site $site, Server $server, array $params, array $properties, $time) {
-			$view = new ErrorView($site, $properties);
-			return $view->whole();
-		});
+		$this->site = $site;
+		$site->install("lti", $this);
 
 		$site->addPreStartup(function(Site $site, Server $server, $time) {
 			return $this->preStartup($site, $server, $time);
@@ -51,20 +78,7 @@ class LtiPlugin extends \CL\Site\Components\Plugin {
 			return $this->postStartup($site, $server, $time);
 		});
 
-		$site->addRoute(['lti', 'download', ':id', ':assign', ':grade'], function(Site $site, Server $server, array $params, array $properties, $time) {
-			$view = new FileDownload($site, $server, $properties);
-			return $view->whole();
-		});
 
-		$site->addRoute(['lti', 'view', ':id', ':assign', ':grade'], function(Site $site, Server $server, array $params, array $properties, $time) {
-			$view = new FileView($site, $properties);
-			return $view->whole();
-		});
-
-		$site->addRoute(['api', 'lti', '*'], function(Site $site, Server $server, array $params, array $properties, $time) {
-			$resource = new ApiLti();
-			return $resource->apiDispatch($site, $server, $params, $properties, $time);
-		});
 	}
 
 	/**
@@ -81,13 +95,6 @@ class LtiPlugin extends \CL\Site\Components\Plugin {
 	 * @return null|string redirect page.
 	 */
 	private function preStartup(Site $site, Server $server, $time) {
-		// Ensure the tables exist
-		$ltiUsers = new LtiUsers($site->db);
-		if(!$ltiUsers->exists()) {
-			$maker = new LtiTableMaker($site->db);
-			$maker->create(false);
-		}
-
 		// Potential LTI Launch
 		if($server->server['REQUEST_METHOD'] === 'POST' && isset($server->post['lti_message_type'])) {
 			$launchRequest = new LaunchRequest();
@@ -204,4 +211,85 @@ class LtiPlugin extends \CL\Site\Components\Plugin {
 
 		return null;
 	}
+
+	/**
+	 * Ensure tables exist for a given subsystem.
+	 * @param Site $site The site configuration component
+	 */
+	public function ensureTables(Site $site) {
+		$maker = new LtiTableMaker($site->db);
+		$maker->create(false);
+	}
+
+
+	/**
+	 * Property get magic method
+	 * @param string $key Property name
+	 *
+	 *
+	 * @return null|string
+	 */
+	public function __get($key) {
+		switch($key) {
+
+
+			default:
+				return parent::__get($key);
+		}
+	}
+
+	/**
+	 * Property set magic method
+	 * @param $key Property name
+	 * @param $value Value to set
+	 */
+	public function __set($key, $value) {
+		parent::__set($key, $value);
+	}
+
+
+	public function start(\CL\Site\Server $server = null) {
+		if($server === null) {
+			// This will start the session
+			$server = new \CL\Site\Server();
+		}
+
+		$redirect = parent::start($server);
+		if($redirect !== null) {
+			return $redirect;
+		}
+
+		if($server->server['REQUEST_METHOD'] === 'POST' &&
+			!empty($server->post['lti_message_type']) && $server->post['lti_message_type'] === 'basic-lti-launch-request') {
+			$lr = new LaunchRequest($this);
+			$redirect = $lr->attempt($server);
+			if($redirect !== null) {
+				return $redirect;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Add a key for the LTI service
+	 * @param string $key Key to use
+	 * @param string $secret Secret value
+	 * @param string $semester Semester code, as in FS18
+	 * @param string $section Section code, like 001
+	 */
+	public function addKey($key, $secret, $semester, $section) {
+		$this->keys[$key] = ['secret'=>$secret, 'semester'=>$semester, 'section'=>$section];
+	}
+
+	public function getKey($key) {
+		if(isset($this->keys[$key])) {
+			return $this->keys[$key];
+		}
+
+		return null;
+	}
+
+	private $site = null;
+	private $keys = [];
 }
