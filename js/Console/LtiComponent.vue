@@ -44,7 +44,7 @@
 </template>
 
 <script>
-    import {MemberSelectorVue} from 'course-cl';
+    import {MemberSelectorVue} from 'course-cl/js/MemberSelectorVue';
 
     export default {
         data: function() {
@@ -56,10 +56,10 @@
                 assignTags: [],
                 gradeTags: [],
 
-                toView: Site.root + 'cl/lti/view',
-                toDownload: Site.root + 'cl/lti/download',
-                toDownloadImg: Site.root + 'vendor/cl/site/img/download.png',
-                toViewImg: Site.root + 'vendor/cl/site/img/eye16.png',
+                toView: Site.root + '/cl/lti/view',
+                toDownload: Site.root + '/cl/lti/download',
+                toDownloadImg: Site.root + '/vendor/cl/site/img/download.png',
+                toViewImg: Site.root + '/vendor/cl/site/img/eye16.png',
 
                 fetched: false,
                 results: []
@@ -67,7 +67,7 @@
         },
 
         mounted() {
-            this.$parent.setTitle(Console.title + ': LTI Auditing');
+            this.$parent.setTitle(': LTI Auditing');
 
             Site.api.get('/api/lti/items', {})
                 .then((response) => {
