@@ -4,6 +4,7 @@
  *Site configuration object for the Lti plugin
  */
 
+/// Classes associated with the Learning Tools Interoperability (LTI) subsystem
 namespace CL\Lti;
 
 use CL\Site\System\Server;
@@ -12,6 +13,7 @@ use CL\Site\Site;
 use CL\Lti\Views\ErrorView;
 use CL\Lti\Api\ApiLti;
 use CL\Users\User;
+use CL\Console\ConsoleView;
 
 /**
  * Site configuration object for the Lti plugin
@@ -59,6 +61,8 @@ class LtiPlugin extends \CL\Site\Plugin {
 				$resource = new ApiLti();
 				return $resource->apiDispatch($site, $server, $params, $properties, $time);
 			});
+		} else if($object instanceof ConsoleView) {
+			$object->addJS('lticonsole');
 		}
 	}
 
@@ -181,9 +185,6 @@ class LtiPlugin extends \CL\Site\Plugin {
 	 * @return null|string redirect page.
 	 */
 	private function postStartup(Site $site, Server $server, $time) {
-
-		$site->console->addPlugin('lticonsole', ['courseconsole']);
-
 		//
 		// Test for a group violation.
 		//
@@ -224,34 +225,38 @@ class LtiPlugin extends \CL\Site\Plugin {
 
 	/**
 	 * Property get magic method
-	 * @param string $key Property name
+	 * @param string $property Property name
 	 *
 	 *
 	 * @return null|string
 	 */
-	public function __get($key) {
-		switch($key) {
+	public function __get($property) {
+		switch($property) {
 
 
 			default:
-				return parent::__get($key);
+				return parent::__get($property);
 		}
 	}
 
 	/**
 	 * Property set magic method
-	 * @param $key Property name
+	 * @param $property Property name
 	 * @param $value Value to set
 	 */
-	public function __set($key, $value) {
-		parent::__set($key, $value);
+	public function __set($property, $value) {
+		parent::__set($property, $value);
 	}
 
-
-	public function start(\CL\Site\Server $server = null) {
+	/**
+	 * Start the LTI service
+	 * @param Server|null $server
+	 * @return null|true
+	 */
+	public function start(Server $server = null) {
 		if($server === null) {
 			// This will start the session
-			$server = new \CL\Site\Server();
+			$server = new Server();
 		}
 
 		$redirect = parent::start($server);
@@ -272,7 +277,10 @@ class LtiPlugin extends \CL\Site\Plugin {
 	}
 
 	/**
-	 * Add a key for the LTI service
+	 * Add a key for the LTI service.
+	 *
+	 * LTI services at indicated by a key/secret combination set by this function
+	 *
 	 * @param string $key Key to use
 	 * @param string $secret Secret value
 	 * @param string $semester Semester code, as in FS18
@@ -282,6 +290,10 @@ class LtiPlugin extends \CL\Site\Plugin {
 		$this->keys[$key] = ['secret'=>$secret, 'semester'=>$semester, 'section'=>$section];
 	}
 
+	/**
+	 * @param string $key
+	 * @return array|null Array with keys 'secret', 'semester', and 'section'
+	 */
 	public function getKey($key) {
 		if(isset($this->keys[$key])) {
 			return $this->keys[$key];

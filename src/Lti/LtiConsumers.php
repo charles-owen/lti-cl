@@ -24,11 +24,8 @@ class LtiConsumers extends \CL\Tables\Table {
 
 	/**
 	 * Add a record to the table.
-	 * @param string $ltiVersion The LTI version returned
-	 * @param string $productFamily The consumer product family
-	 * @param string $productVersion The consumer product version
-	 * @param int $time Created time to set
-	 * @return null
+	 * @param LtiConsumer $consumer
+	 * @return int|null
 	 */
 	public function add(LtiConsumer $consumer) {
 		$sql = <<<SQL
@@ -51,6 +48,11 @@ SQL;
 		return $consumer->id;
 	}
 
+	/**
+	 * Update a record
+	 * @param LtiConsumer $consumer
+	 * @return null
+	 */
 	public function update(LtiConsumer $consumer) {
 		$sql = <<<SQL
 update $this->tablename
@@ -130,7 +132,10 @@ SQL;
 		return new LtiConsumer($row);
 	}
 
-
+	/**
+	 * Delete a consumer record.
+	 * @param string $id Record id to delete
+	 */
 	public function delete($id) {
 		$sql = <<<SQL
 delete from $this->tablename

@@ -9,7 +9,7 @@ namespace CL\Lti;
  * @copyright  IMS Global Learning Consortium Inc
  * @date  2016
  * @version 3.0.0
- * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * License http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  *
  * CBO: Modified to change SSL version from 3 to 4
  *

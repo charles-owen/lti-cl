@@ -1,5 +1,6 @@
 <?php
 /**
+ * @file
  * Table maker for Lti tables
  */
 
@@ -7,6 +8,9 @@ namespace CL\Lti;
 
 use CL\Tables\Config;
 
+/**
+ * Table maker for Lti tables
+ */
 class LtiTableMaker extends \CL\Tables\TableMaker {
 
 	/**

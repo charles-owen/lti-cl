@@ -1,5 +1,6 @@
 <?php
 /**
+ * @file
  * Locate or make user based on the LTI request
  */
 
@@ -12,8 +13,16 @@ use CL\Course\Member;
 use CL\Users\Users;
 use CL\Users\User;
 
+/**
+ * Locate or make user based on the LTI request
+ */
 class LtiUserMaker {
-
+	/**
+	 * LtiUserMaker constructor.
+	 * @param Site $site Site object
+	 * @param Server $server Server object
+	 * @param int $time Current time
+	 */
 	public function __construct(Site $site, Server $server, $time) {
 		$this->site = $site;
 		$this->server = $server;

@@ -9,6 +9,7 @@ namespace CL\Lti;
 use CL\Course\Member;
 use CL\Course\Members;
 use CL\Users\User;
+use CL\Tables\Config;
 
 
 /**
@@ -17,8 +18,11 @@ use CL\Users\User;
  * This table maps the LTI User ID to a site user ID.
  */
 class LtiUsers extends \CL\Tables\Table {
-
-	function __construct(\CL\Tables\Config $config) {
+	/**
+	 * LtiUsers constructor.
+	 * @param Config $config Database configuration
+	 */
+	function __construct(Config $config) {
 		parent::__construct($config, "lti_user");
 	}
 
@@ -27,8 +31,8 @@ class LtiUsers extends \CL\Tables\Table {
 	 * @param User $user The user to add. Must include a membership.
 	 * @param $ltiConsumerId - The LTI consumer
 	 * @param $ltiUserId - The Lti user ID from the launch request
-	 * @param $ltiRoles
-	 * @param null $time
+	 * @param $ltiRoles LTI provided roles
+	 * @param int $time Current time
 	 * @return bool
 	 */
 	function add(User $user, $ltiConsumerId, $ltiUserId, $ltiRoles, $time=null) {
@@ -93,7 +97,10 @@ SQL;
 		return $user;
 	}
 
-
+	/**
+	 * create table statement
+	 * @return string HTML
+	 */
 	function createSQL() {
 		return <<<SQL
 CREATE TABLE if not exists $this->tablename (

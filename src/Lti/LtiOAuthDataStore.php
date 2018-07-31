@@ -1,14 +1,14 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: charl
- * Date: 6/25/2018
- * Time: 6:08 PM
+ * @file
+ * DataStore object supporting OAuth authentication
  */
 
 namespace CL\Lti;
 
-
+/**
+ * DataStore object supporting OAuth authentication
+ */
 class LtiOAuthDataStore extends OAuth\OAuthDataStore {
 
 	private $config;
@@ -16,6 +16,13 @@ class LtiOAuthDataStore extends OAuth\OAuthDataStore {
 	private $consumer_key;
 	private $consumer_secret;
 
+	/**
+	 * LtiOAuthDataStore constructor.
+	 * @param \CL\Site\Site $config
+	 * @param $consumer_key
+	 * @param $consumer_secret
+	 * @param LtiConsumer $consumer
+	 */
 	public function __construct(\CL\Site\Site $config, $consumer_key, $consumer_secret, LtiConsumer $consumer) {
 		$this->config = $config;
 		$this->consumer = $consumer;
@@ -24,31 +31,64 @@ class LtiOAuthDataStore extends OAuth\OAuthDataStore {
 
 	}
 
-	function lookup_consumer($consumer_key) {
+	/**
+	 * Lookup a given consumer key.
+	 *
+	 * Since we assume only one consumer, this just returns an OAuthConsumer object.
+	 * @param $consumer_key Key to lookup
+	 * @return OAuth::OAuthConsumer
+	 */
+	public function lookup_consumer($consumer_key) {
 		return new OAuth\OAuthConsumer($this->consumer_key, $this->consumer_secret);
 	}
 
-	function lookup_token($consumer, $token_type, $token) {
+	/**
+	 * Lookup an authentication token for a consumer.
+	 *
+	 * Since we assume only one consumer, this just creates a new OAuthToken object
+	 * @param $consumer
+	 * @param $token_type
+	 * @param $token
+	 * @return OAuth::OAuthToken
+	 */
+	public function lookup_token($consumer, $token_type, $token) {
 
 		return new OAuth\OAuthToken($consumer, '');
 
 	}
 
-	function lookup_nonce($consumer, $token, $nonce, $timestamp) {
+	/**
+	 * Lookup nonce in the nonce table.
+	 * @param $consumer
+	 * @param $token
+	 * @param $nonce
+	 * @param $timestamp
+	 * @return bool
+	 */
+	public function lookup_nonce($consumer, $token, $nonce, $timestamp) {
 		$nonces = new LtiNonces($this->config->db);
 		return !$nonces->add($this->consumer->id, $nonce, $timestamp);
 	}
 
-	function new_request_token($consumer, $callback = null) {
-
+	/**
+	 * Create a new request token.
+	 * @param $consumer
+	 * @param null $callback
+	 * @return null
+	 */
+	public function new_request_token($consumer, $callback = null) {
 		return NULL;
-
 	}
 
-	function new_access_token($token, $consumer, $verifier = null) {
-
+	/**
+	 * Create a new access token.
+	 * @param $token
+	 * @param $consumer
+	 * @param null $verifier
+	 * @return null
+	 */
+	public function new_access_token($token, $consumer, $verifier = null) {
 		return NULL;
-
 	}
 
 }

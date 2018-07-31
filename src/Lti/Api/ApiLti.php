@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * API Resource for /api/lti
+ */
 
 namespace CL\Lti\Api;
 
@@ -16,12 +20,26 @@ use CL\Lti\LtiServices;
  * API Resource for /api/lti
  */
 class ApiLti extends \CL\Users\Api\Resource {
+	/// Default limit on responses to query
 	const QUERY_LIMIT = 500;
 
+	/**
+	 * ApiLti constructor.
+	 */
 	public function __construct() {
 		parent::__construct();
 	}
 
+	/**
+	 * Dispatch API calls.
+	 * @param Site $site Site object
+	 * @param Server $server Server object
+	 * @param array $params Parameters passed by the router (after /api/quiz)
+	 * @param array $properties Properties passed by the router (:id values)
+	 * @param int $time Current time
+	 * @return JsonAPI with response filled in
+	 * @throws APIException
+	 */
 	public function dispatch(Site $site, Server $server, array $params, array $properties, $time) {
 		$user = $this->isUser($site);
 
@@ -43,7 +61,7 @@ class ApiLti extends \CL\Users\Api\Resource {
 		throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
 	}
 
-	public function query(Site $site, User $user, Server $server) {
+	private function query(Site $site, User $user, Server $server) {
 		$this->atLeast($user, User::STAFF);
 
 		$params = [];

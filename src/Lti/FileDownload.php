@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * View class for viewing the content of files.
+ * View class for viewing the content of files uploaded as LTI submissions.
  */
 
 namespace CL\Lti;
@@ -10,7 +10,16 @@ use CL\Site\Site;
 use CL\Site\View;
 use CL\Site\System\Server;
 
+/**
+ * View class for viewing the content of files uploaded as LTI submissions.
+ */
 class FileDownload extends View {
+	/**
+	 * FileDownload constructor.
+	 * @param Site $site The Site object
+	 * @param Server $server The Server object
+	 * @param array $properties Parameters passed to route ('id', 'assign', 'grade')
+	 */
 	public function __construct(Site $site, Server $server, $properties) {
 		parent::__construct($site);
 
@@ -18,6 +27,10 @@ class FileDownload extends View {
 		$this->server = $server;
 	}
 
+	/**
+	 * Present the whole file including header configuration.
+	 * @return string Downloaded file
+	 */
 	public function whole() {
 
 		// Paths to the view are of the form:

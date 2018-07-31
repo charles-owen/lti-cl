@@ -14,8 +14,13 @@ namespace CL\Lti;
  * one time, which prevents playback attacks.
  */
 class LtiNonces extends \CL\Tables\Table {
+	/// Maximum nonce age in the table in seconds
 	const MAX_NONCE_AGE = 30 * 60;  // seconds
 
+	/**
+	 * LtiNonces constructor.
+	 * @param \CL\Tables\Config $config Database configuration object
+	 */
 	function __construct(\CL\Tables\Config $config) {
 		parent::__construct($config, "lti_nonce");
 	}
@@ -24,6 +29,7 @@ class LtiNonces extends \CL\Tables\Table {
 	 * Add a nonce to the table.
 	 * @param string $consumerId The consumer's ID
 	 * @param string $value Value of the nonce
+	 * @param int $time Current time
 	 * @return True if success, false if already exists
 	 */
 	function add($consumerId, $value, $time=null) {
@@ -48,7 +54,12 @@ SQL;
 		return true;
 	}
 
-	function expire($time = null) {
+	/**
+	 * Expire any out-of-date nonces in the table (by deleting them)
+	 * @param int $time Current time
+	 * @return bool
+	 */
+	public function expire($time = null) {
 		if($time === null) {
 			$time = time();
 		}
@@ -70,7 +81,11 @@ SQL;
 		return true;
 	}
 
-	function createSQL() {
+	/**
+	 * Create table command
+	 * @return string SQL
+	 */
+	public function createSQL() {
 		return <<<SQL
 CREATE TABLE if not exists $this->tablename (
   lti_consumerid int(11) NOT NULL, 

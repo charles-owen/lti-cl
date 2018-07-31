@@ -7,6 +7,10 @@ namespace CL\Lti;
  */
 class LtiConsumer {
 
+	/**
+	 * LtiConsumer constructor.
+	 * @param array $row Database row (optional)
+	 */
 	public function __construct($row = null) {
 		if($row !== null) {
 			$this->id = $row['id'];
@@ -17,9 +21,18 @@ class LtiConsumer {
 		}
 	}
 
+	/// Record ID
 	public $id = 0;
+
+	/// LTI version for this consumer
 	public $ltiVersion = '';
+
+	/// Consumer product family
 	public $productFamily = '';
+
+	/// Consumer product version
 	public $productVersion = '';
+
+	/// When was this record created?
 	public $created = 0;
 }

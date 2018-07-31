@@ -99,9 +99,10 @@ SQL;
 	 * @param string $key Key for the resource
 	 * @param string $assignTag Assignment tag
 	 * @param null|string $gradeTag Grading item tag
+	 * @param string $gradeToken Token used to identify the grade in the remote system
 	 * @param string $sourcedId The lis_result_sourcedid value.
 	 * @param string $url The lis_outcome_service_url
-	 * @param $time The current time
+	 * @param int $time The current time
 	 * @return array|null Array with the table fields.
 	 */
 	public function getOrMake(User $user, $key, $assignTag, $gradeTag=null, $gradeToken, $sourcedId, $url, $time) {
@@ -178,6 +179,17 @@ SQL;
 		}
 	}
 
+	/**
+	 * Set a grade in the outcomes table.
+	 * @param User $user
+	 * @param $assignTag
+	 * @param null $gradeTag
+	 * @param $grade
+	 * @param $data
+	 * @param $type
+	 * @param $time
+	 * @return bool
+	 */
 	public function setGrade(User $user, $assignTag, $gradeTag=null, $grade, $data, $type, $time) {
 		$sql = <<<SQL
 update $this->tablename
@@ -321,8 +333,14 @@ SQL;
 		return $tags;
 	}
 
-
-	public function readText($userId, $assignTag, $gradeTag) {
+	/**
+	 * Read text from an LTI submission.
+	 * @param int $memberId The internal member ID
+	 * @param string $assignTag Assignment tag
+	 * @param string $gradeTag Grading item tag
+	 * @return array|null
+	 */
+	public function readText($memberId, $assignTag, $gradeTag) {
 		$pdo = $this->pdo;
 
 		$sql = <<<SQL
@@ -334,7 +352,7 @@ SQL;
 		$type = null;
 
 		$stmt = $pdo->prepare($sql);
-		$stmt->execute([$userId, $assignTag, $gradeTag]);
+		$stmt->execute([$memberId, $assignTag, $gradeTag]);
 
 		//echo $this->sub_sql($sql, [$userId, $appTag, $name]);
 

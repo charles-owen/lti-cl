@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Services that communicate with the remove LMS.
+ * Services that communicate with the remote LMS.
  *
  * Includes the outcomes service: setting grades.
  *
@@ -13,7 +13,9 @@ namespace CL\Lti;
 use CL\Users\User;
 use CL\Site\Site;
 
-
+/**
+ * Services that communicate with the remote LMS.
+ */
 class LtiServices {
 	/// Read action
 	const EXT_READ = 1;
@@ -26,6 +28,10 @@ class LtiServices {
 
 	private $site;
 
+	/**
+	 * LtiServices constructor.
+	 * @param Site $site Site object
+	 */
 	public function __construct(Site $site) {
 		$this->site = $site;
 	}
@@ -35,9 +41,10 @@ class LtiServices {
 	/**
 	 * Perform an Outcomes service request.
 	 *
+	 * @param User $user User to perform outcomes for
 	 * @param int $action The action type constant
-	 * @param Outcome $ltiOutcome Outcome object
-	 * @param User $user User object
+	 * @param Outcome $outcome Outcome object
+	 * @param int $grade Grade to apply (0-100)
 	 *
 	 * @return boolean True if the request was successfully processed
 	 */
