@@ -3,6 +3,7 @@
  * LTI console components
  */
 
+import {User} from 'users-cl/js/Users/User';
 import LtiComponent from './LtiComponent.vue';
 
 export const LtiConsole = function (site, Console) {
@@ -14,7 +15,7 @@ export const LtiConsole = function (site, Console) {
     });
 
     Console.components.addOption({
-        atLeast: Users.User.STAFF,
+        atLeast: {tag: 'lti-view-submissions', default: User.STAFF},
         page: {title: 'Main', route: '', order: 1},
         section: {title: 'Lti', order: 20},
         title: 'LTI Submissions',
