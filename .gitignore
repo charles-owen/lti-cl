@@ -3,13 +3,6 @@ tests/config.php
 /html
 /vendor
 
-
-# compiled output
-/dist
-/dist-server
-/tmp
-/out-tsc
-
 # IDEs and editors
 /.idea
 .project
