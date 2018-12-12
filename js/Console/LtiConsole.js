@@ -6,7 +6,8 @@
 import {User} from 'users-cl/js/Users/User';
 import LtiComponent from './LtiComponent.vue';
 
-export const LtiConsole = function (site, Console) {
+export const LtiConsole = function (site) {
+    const Console = site.console;
 
     Console.tables.add({
         title: 'LTI',

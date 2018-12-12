@@ -5,4 +5,4 @@
 
 import {LtiConsole} from './LtiConsole';
 
-new LtiConsole(Site.Site, Site.Console);
+new LtiConsole(Site.Site);
