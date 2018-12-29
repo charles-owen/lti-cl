@@ -11,7 +11,7 @@ export const LtiConsole = function (site) {
 
     Console.tables.add({
         title: 'LTI',
-        order: 20,
+        order: 90,
         api: '/api/lti/tables'
     });
 
