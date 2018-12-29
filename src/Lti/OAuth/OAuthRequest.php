@@ -8,6 +8,8 @@ namespace CL\Lti\OAuth;
  * @copyright  Andy Smith
  * @version 2008-08-04
  * @license https://opensource.org/licenses/MIT The MIT License
+ *
+ * @cond
  */
 class OAuthRequest {
 
@@ -288,3 +290,5 @@ class OAuthRequest {
     }
 
 }
+
+/// @endcond
