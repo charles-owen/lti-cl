@@ -1,11 +1,12 @@
-/**
- * @file
- * LTI console components
- */
 
-import {User} from 'users-cl/js/Users/User';
 import LtiComponent from './LtiComponent.vue';
 
+const User = Site.User;
+
+/**
+ * Install LTI console components
+ * @constructor
+ */
 export const LtiConsole = function (site) {
     const Console = site.console;
 
