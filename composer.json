@@ -15,13 +15,19 @@
     }
   },
   "require": {
-    "IMSGlobal/LTI" : "^3.0.0"
+    "IMSGlobal/LTI" : "^3.0.0",
+    "cl/course": "^2.1"
   },
   "repositories": [
     {
       "type": "vcs",
       "url": "https://github.com/charles-owen/lti-cl.git"
     }
-  ]
+  ],
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.1.x-dev"
+    }
+  }
 }
 
