@@ -15,7 +15,7 @@
     }
   },
   "require": {
-    "IMSGlobal/LTI" : "^3.0.0",
+    "imsglobal/lti" : "^3.0.0",
     "cl/course": "^2.1"
   },
   "repositories": [
