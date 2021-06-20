@@ -10,8 +10,10 @@
   "author": "Charles B. Owen",
   "license": "MIT",
   "dependencies": {
+    "console-cl": ">=0.0.1",
+    "course-cl": ">=0.0.1",
     "site-cl": ">=0.0.1",
     "users-cl": ">=0.0.1",
-    "console-cl": ">=0.0.1"
+    "vue": "^2.6.14"
   }
 }
