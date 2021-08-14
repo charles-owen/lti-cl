@@ -105,7 +105,7 @@ SQL;
 	 * @param int $time The current time
 	 * @return array|null Array with the table fields.
 	 */
-	public function getOrMake(User $user, $key, $assignTag, $gradeTag=null, $gradeToken, $sourcedId, $url, $time) {
+	public function getOrMake(User $user, $key, $assignTag, $gradeTag, $gradeToken, $sourcedId, $url, $time) {
 		$pdo = $this->pdo;
 
 		if($gradeTag === null) {
@@ -190,7 +190,7 @@ SQL;
 	 * @param $time
 	 * @return bool
 	 */
-	public function setGrade(User $user, $assignTag, $gradeTag=null, $grade, $data, $type, $time) {
+	public function setGrade(User $user, $assignTag, $gradeTag, $grade, $data, $type, $time) {
 		$sql = <<<SQL
 update $this->tablename
 set grade=?, data=?, `type`=?, modified=?
